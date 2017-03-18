@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Markdown</title>
+    <link rel="stylesheet" href="__PLUG__/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="__PLUG__/editor.md/css/editormd.css" />
+	<style>
+		body,.container-fluid{margin:0;padding:0;overflow:hidden;}
+		.shortcuts{color:#fff;width:50%;height:250px;position:absolute;top:50%;left:39.5%;z-index:20;opacity:.1}
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="col-md-2">
+			
+		</div>
+		<div class="col-md-10">
+			<div id="test-editormd">
+			</div>
+		</div>
+	</div>
+    <script src="__PLUG__/jquery/dist/jquery.min.js"></script>
+    <script src="__PLUG__/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="__PLUG__/editor.md/editormd.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var testEditor = editormd("test-editormd", {
+                width: "100%",
+                height: $(document).height(),
+                placeholder:'笔记从这里开始',
+                fullscreen:true,
+                markdown : "",  //
+                path : '__PLUG__/editor.md/lib/',
+                theme : "dark",
+                previewTheme : "dark",
+                editorTheme : "pastel-on-dark",
+                htmlDecode:true,
+                codeFold : true,
+                emoji:true,
+                toolbar  : true,
+                delay:500,
+                imageUpload : true,
+                imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL : "{:Url('Uploadify/upload')}",
+                disabledKeyMaps : [
+			        "Ctrl-B", "F11", "F10"  // disable some default keyboard shortcuts handle
+			    ],
+			    onload : function() {
+			        var keyMap = {
+			            "Ctrl-S": function(cm) {
+			            },
+			            "Ctrl-A": function(cm) { // default Ctrl-A selectAll
+			                cm.execCommand("selectAll");
+			            }
+			        };
+			        this.addKeyMap(keyMap);
+			    },
+				onchange : function() {
+                    this.clearShortcuts();
+                },
+                onshortcuts:function(element){
+                    var str ='';
+                    $.post("{:Url('index/read_shortcuts')}",{date:Date.now()},function(result){
+                        for(i in result){
+                            str += result[i].cuts+"&nbsp;&nbsp;"+result[i].ch+"<br/>";
+                        }
+                        element.html(str);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
